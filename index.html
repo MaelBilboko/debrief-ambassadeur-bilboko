@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulaire de Débriefing - Bilbôko</title>
+  <style>
+    :root {
+      --primary: #2b5876;
+      --secondary: #4e4376;
+      --accent: #ff6b6b;
+      --bg: #f4f7f6;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --border: #cccccc;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      margin: 0;
+      padding: 20px 10px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 25px;
+    }
+
+    fieldset {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      background-color: #fafafa;
+    }
+
+    legend {
+      font-weight: bold;
+      color: var(--secondary);
+      padding: 0 10px;
+      font-size: 1.1em;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 5px rgba(43, 88, 118, 0.3);
+    }
+
+    .checkbox-group, .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .checkbox-item, .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-item input, .radio-item input {
+      width: 18px;
+      height: 18px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .sub-field {
+      margin-top: 10px;
+      padding-left: 15px;
+      border-left: 3px solid var(--primary);
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button[type="submit"]:hover {
+      opacity: 0.9;
+    }
+
+    #responseMessage {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .msg-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .msg-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Formulaire de Débriefing Mission - Bilbôko</h1>
+
+    <form id="debriefForm">
+
+      <!-- SECTION 1 -->
+      <fieldset>
+        <legend>1. Informations Générales</legend>
+        
+        <div class="form-group">
+          <label for="Nom_Prenom">Q1. Nom et Prénom de l'ambassadeur(drice) *</label>
+          <input type="text" id="Nom_Prenom" name="Nom_Prenom" required>
+        </div>
+
+        <div class="form-group">
+          <label for="Date_Mission">Q2. Date de la mission *</label>
+          <input type="date" id="Date_Mission" name="Date_Mission" required>
+        </div>
+
+        <div class="form-group">
+          <label for="Plage_Horaire">Q3. Plage horaire *</label>
+          <input type="text" id="Plage_Horaire" name="Plage_Horaire" placeholder="Ex: 09h00 - 17h00" required>
+        </div>
+
+        <div class="form-group">
+          <label for="Magasin">Q4. Nom du magasin et ville *</label>
+          <input type="text" id="Magasin" name="Magasin" placeholder="Ex: Carrefour Biarritz" required>
+        </div>
+      </fieldset>
+
+      <!-- SECTION 2 -->
+      <fieldset>
+        <legend>2. Gestion du Temps</legend>
+
+        <div class="form-group">
+          <label for="Temps_Rayon">Q5. Temps passé en rayon (conseil client, échanges, observation)</label>
+          <input type="text" id="Temps_Rayon" name="Temps_Rayon" placeholder="Ex: 3h30">
+        </div>
+
+        <div class="form-group">
+          <label for="Temps_Machine">Q6. Temps passé près de la machine / du meuble VRAC</label>
+          <input type="text" id="Temps_Machine" name="Temps_Machine" placeholder="Ex: 2h00">
+        </div>
+
+        <div class="form-group">
+          <label for="Temps_Stickage">Q7. Temps consacré au stickage / balisage des sachets</label>
+          <input type="text" id="Temps_Stickage" name="Temps_Stickage" placeholder="Ex: 1h00">
+        </div>
+      </fieldset>
+
+      <!-- SECTION 3 -->
+      <fieldset>
+        <legend>3. Stickage & Volume</legend>
+
+        <div class="form-group">
+          <label>Q8. Marques stickées (cocher toutes les réponses applicables)</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="Marques_Stickees" value="Marque A"> Marque A</label>
+            <label class="checkbox-item"><input type="checkbox" name="Marques_Stickees" value="Marque B"> Marque B</label>
+            <label class="checkbox-item"><input type="checkbox" name="Marques_Stickees" value="Marque C"> Marque C</label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="Marques_Stickees" value="Autre" id="checkAutreMarque"> Autre(s)
+            </label>
+          </div>
+          <div class="sub-field hidden" id="fieldAutreMarque">
+            <input type="text" name="Marques_Stickees_Autre" placeholder="Précisez la ou les autres marques">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="Volume_Stickage">Q9. Volume total de sachets stickés (estimation ou nombre exact)</label>
+          <input type="text" id="Volume_Stickage" name="Volume_Stickage" placeholder="Ex: Environ 150 sachets">
+        </div>
+      </fieldset>
+
+      <!-- SECTION 4 -->
+      <fieldset>
+        <legend>4. Interactions Clients</legend>
+
+        <div class="form-group">
+          <label for="Interactions_Rayon">Q10. Nombre d'interactions clients en rayon</label>
+          <input type="number" id="Interactions_Rayon" name="Interactions_Rayon" min="0">
+        </div>
+
+        <div class="form-group">
+          <label for="Interactions_Machine">Q11. Nombre d'interactions clients autour de la machine</label>
+          <input type="number" id="Interactions_Machine" name="Interactions_Machine" min="0">
+        </div>
+
+        <div class="form-group">
+          <label for="Clients_Convaincus">Q12. Typologie : Clients directement convaincus par le concept</label>
+          <input type="number" id="Clients_Convaincus" name="Clients_Convaincus" min="0">
+        </div>
+
+        <div class="form-group">
+          <label for="Clients_Pragmatiques">Q13. Typologie : Clients "pragmatiques" (intéressés mais demandent des explications)</label>
+          <input type="number" id="Clients_Pragmatiques" name="Clients_Pragmatiques" min="0">
+        </div>
+
+        <div class="form-group">
+          <label for="Clients_Refractaires">Q14. Typologie : Clients réfractaires ou freinés</label>
+          <input type="number" id="Clients_Refractaires" name="Clients_Refractaires" min="0">
+        </div>
+      </fieldset>
+
+      <!-- SECTION 5 -->
+      <fieldset>
+        <legend>5. Objections Clients Rencontrées</legend>
+
+        <div class="form-group">
+          <label for="Obj_Passage">Q15. "Deux passages en caisse / étape supplémentaire" (Fréquence d'apparition)</label>
+          <input type="number" id="Obj_Passage" name="Obj_Passage" min="0" placeholder="Nombre de fois soulevée">
+        </div>
+
+        <div class="form-group">
+          <label for="Obj_Surcout">Q16. "Surcoût / Prix de la consigne" (Fréquence d'apparition)</label>
+          <input type="number" id="Obj_Surcout" name="Obj_Surcout" min="0" placeholder="Nombre de fois soulevée">
+        </div>
+
+        <div class="form-group">
+          <label for="Obj_Logistique">Q17. "Logistique du retour des sachets / Contrainte de stockage chez soi"</label>
+          <input type="number" id="Obj_Logistique" name="Obj_Logistique" min="0" placeholder="Nombre de fois soulevée">
+        </div>
+
+        <div class="form-group">
+          <label for="Obj_Recyclage">Q18. "Préfère le recyclage classique (jaune)"</label>
+          <input type="number" id="Obj_Recyclage" name="Obj_Recyclage" min="0" placeholder="Nombre de fois soulevée">
+        </div>
+
+        <div class="form-group">
+          <label for="Obj_Machine">Q19. "Machine trop complexe / peur de mal faire"</label>
+          <input type="number" id="Obj_Machine" name="Obj_Machine" min="0" placeholder="Nombre de fois soulevée">
+        </div>
+
+        <div class="form-group">
+          <label for="Obj_Marques">Q20. "Pas assez de choix de marques ou produits éligibles"</label>
+          <input type="number" id="Obj_Marques" name="Obj_Marques" min="0" placeholder="Nombre de fois soulevée">
+        </div>
+
+        <div class="form-group">
+          <label for="Obj_PasDeTemps">Q21. "Pas le temps aujourd'hui / pressé(e)"</label>
+          <input type="number" id="Obj_PasDeTemps" name="Obj_PasDeTemps" min="0" placeholder="Nombre de fois soulevée">
+        </div>
+
+        <div class="form-group">
+          <label for="Obj_Autre">Q22. Autres objections spécifiques ou remarques récurrentes</label>
+          <textarea id="Obj_Autre" name="Obj_Autre" rows="3" placeholder="Saisissez ici d'autres freins observés..."></textarea>
+        </div>
+      </fieldset>
+
+      <!-- SECTION 6 -->
+      <fieldset>
+        <legend>6. État du Dispositif en Magasin</legend>
+
+        <div class="form-group">
+          <label>Q23. La machine / le meuble était-il pleinement fonctionnel ?</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="Machine_Fonctionnelle_Option" value="Oui" class="toggle-details" data-target="detailsQ23" data-show="Non"> Oui</label>
+            <label class="radio-item"><input type="radio" name="Machine_Fonctionnelle_Option" value="Partiellement" class="toggle-details" data-target="detailsQ23" data-show="Oui"> Partiellement</label>
+            <label class="radio-item"><input type="radio" name="Machine_Fonctionnelle_Option" value="Non" class="toggle-details" data-target="detailsQ23" data-show="Oui"> Non (Panne, blocage, etc.)</label>
+          </div>
+          <div class="sub-field hidden" id="detailsQ23">
+            <label for="Machine_Fonctionnelle_Details">Si Non ou Partiellement, précisez :</label>
+            <textarea id="Machine_Fonctionnelle_Details" name="Machine_Fonctionnelle_Details" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Q24. L'affichage et le balisage étaient-ils complets et bien visibles ?</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="Affichage_Complet_Option" value="Oui" class="toggle-details" data-target="detailsQ24" data-show="Non"> Oui</label>
+            <label class="radio-item"><input type="radio" name="Affichage_Complet_Option" value="Non" class="toggle-details" data-target="detailsQ24" data-show="Oui"> Non (Affiches manquantes, masquées, etc.)</label>
+          </div>
+          <div class="sub-field hidden" id="detailsQ24">
+            <label for="Affichage_Complet_Details">Si Non, précisez les éléments manquants :</label>
+            <textarea id="Affichage_Complet_Details" name="Affichage_Complet_Details" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Q25. Avez-vous constaté des sachets ou produits déplacés / hors zone ?</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="Produits_Deplaces_Option" value="Oui" class="toggle-details" data-target="detailsQ25" data-show="Oui"> Oui</label>
+            <label class="radio-item"><input type="radio" name="Produits_Deplaces_Option" value="Non" class="toggle-details" data-target="detailsQ25" data-show="Non"> Non</label>
+          </div>
+          <div class="sub-field hidden" id="detailsQ25">
+            <label for="Produits_Deplaces_Details">Si Oui, précisez :</label>
+            <textarea id="Produits_Deplaces_Details" name="Produits_Deplaces_Details" rows="2"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- SECTION 7 -->
+      <fieldset>
+        <legend>7. Échanges & Remarques</legend>
+
+        <div class="form-group">
+          <label for="Echanges_Personnel">Q26. Échanges avec le personnel de magasin (Chef de rayon, directeurs, hôtes de caisse)</label>
+          <textarea id="Echanges_Personnel" name="Echanges_Personnel" rows="3" placeholder="Retours du personnel, adhésion, problèmes signalés..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="Echanges_Commerciaux">Q27. Échanges avec les commerciaux des marques partenaires présentes</label>
+          <textarea id="Echanges_Commerciaux" name="Echanges_Commerciaux" rows="3" placeholder="Discussions, retours sur le dispositif..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="Suggestions">Q28. Ideas, suggestions d'amélioration ou remarques libres</label>
+          <textarea id="Suggestions" name="Suggestions" rows="4" placeholder="Points à améliorer pour la prochaine mission..."></textarea>
+        </div>
+      </fieldset>
+
+      <button type="submit" id="submitBtn">Envoyer le débriefing</button>
+    </form>
+
+    <div id="responseMessage" class="hidden"></div>
+  </div>
+
+  <script>
+    // URL de votre Web App Google Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyobsAOyfdyPjnfvo1CockOS-yKO4x5GcLvY-qwse9Bb0rFOSSTWz8xL_LPLUwHvxXI/exec";
+
+    // Gestion de l'affichage conditionnel du champ "Autre" pour les marques
+    const checkAutreMarque = document.getElementById('checkAutreMarque');
+    const fieldAutreMarque = document.getElementById('fieldAutreMarque');
+
+    checkAutreMarque.addEventListener('change', function() {
+      if (this.checked) {
+        fieldAutreMarque.classList.remove('hidden');
+      } else {
+        fieldAutreMarque.classList.add('hidden');
+      }
+    });
+
+    // Gestion des affichages conditionnels pour les boutons radio (Q23, Q24, Q25)
+    document.querySelectorAll('.toggle-details').forEach(radio => {
+      radio.addEventListener('change', function() {
+        const targetId = this.getAttribute('data-target');
+        const showCondition = this.getAttribute('data-show');
+        const targetElement = document.getElementById(targetId);
+
+        if (showCondition === "Oui") {
+          targetElement.classList.remove('hidden');
+        } else {
+          targetElement.classList.add('hidden');
+        }
+      });
+    });
+
+    // Interception de la soumission du formulaire
+    const form = document.getElementById('debriefForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const responseMessage = document.getElementById('responseMessage');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Envoi en cours...";
+      responseMessage.className = "hidden";
+
+      const formData = new FormData(form);
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Envoyer le débriefing";
+
+        if (data.result === 'success') {
+          responseMessage.className = "msg-success";
+          responseMessage.innerText = "Votre débriefing a été enregistré avec succès ! Merci.";
+          form.reset();
+          // Masquer tous les champs conditionnels réinitialisés
+          document.querySelectorAll('.sub-field').forEach(el => el.classList.add('hidden'));
+        } else {
+          throw new Error(data.error || 'Une erreur est survenue');
+        }
+      })
+      .catch(error => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Envoyer le débriefing";
+        responseMessage.className = "msg-error";
+        responseMessage.innerText = "Erreur lors de l'envoi : " + error.message;
+      });
+    });
+  </script>
+</body>
+</html>
