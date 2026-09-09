@@ -28,6 +28,7 @@
       padding: 30px;
       border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
     }
 
     h1 {
@@ -40,6 +41,25 @@
       color: #555;
       margin-bottom: 25px;
       line-height: 1.5;
+    }
+
+    /* Indicateur de sauvegarde automatique */
+    #save-indicator {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background-color: #e3f2fd;
+      color: #0d47a1;
+      border: 1px solid #90caf9;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
 
     fieldset {
@@ -199,7 +219,6 @@
       font-weight: bold;
     }
 
-    /* Message de notification d'envoi */
     #status-message {
       display: none;
       padding: 15px;
@@ -221,6 +240,8 @@
   </style>
 </head>
 <body>
+
+<div id="save-indicator">💾 Brouillon sauvegardé</div>
 
 <div class="container">
   <h1>Débriefing mission - ambassadeur Bilbôko</h1>
@@ -567,7 +588,7 @@
     </div>
 
     <div class="button-group">
-      <button type="reset" class="btn btn-reset" onclick="resetFormCustom()">Réinitialiser</button>
+      <button type="button" class="btn btn-reset" onclick="manualReset()">Réinitialiser</button>
       <button type="submit" id="submitBtn" class="btn btn-submit">Enregistrer le débrief</button>
     </div>
 
@@ -575,12 +596,16 @@
 </div>
 
 <script>
+  const STORAGE_KEY = 'bilboko_debrief_draft';
+  let saveTimeout;
+
   function updateCounter(fieldId, delta) {
     const input = document.getElementById(fieldId);
     let currentValue = parseInt(input.value) || 0;
     currentValue += delta;
     if (currentValue < 0) currentValue = 0;
     input.value = currentValue;
+    saveDraft();
   }
 
   function toggleAutreInput() {
@@ -592,6 +617,7 @@
     } else {
       input.value = '';
     }
+    saveDraft();
   }
 
   function toggleConditionalDetails(selectId, boxId, textId, triggerValues) {
@@ -601,11 +627,11 @@
     if (!select || !detailsBox || !textarea) return;
     if (triggerValues.includes(select.value)) {
       detailsBox.style.display = 'block';
-      textarea.focus();
     } else {
       detailsBox.style.display = 'none';
       textarea.value = '';
     }
+    saveDraft();
   }
 
   function resetFormCustom() {
@@ -615,7 +641,89 @@
     document.getElementById('input-autre-marque').disabled = true;
   }
 
-  // Interception de l'envoi du formulaire via JavaScript (AJAX)
+  function manualReset() {
+    if (confirm("Es-tu sûr de vouloir réinitialiser tout le formulaire ? Toutes les données saisies seront effacées.")) {
+      document.getElementById('debriefForm').reset();
+      resetFormCustom();
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }
+
+  // --- SAUVEGARDE AUTOMATIQUE & NOTIFICATION VISUELLE ---
+
+  function showSaveIndicator() {
+    const indicator = document.getElementById('save-indicator');
+    indicator.style.opacity = '1';
+
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+      indicator.style.opacity = '0';
+    }, 2000);
+  }
+
+  function saveDraft() {
+    const form = document.getElementById('debriefForm');
+    const formData = new FormData(form);
+    const data = {};
+
+    for (let [key, value] of formData.entries()) {
+      if (data[key]) {
+        if (!Array.isArray(data[key])) {
+          data[key] = [data[key]];
+        }
+        data[key].push(value);
+      } else {
+        data[key] = value;
+      }
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    showSaveIndicator();
+  }
+
+  function restoreDraft() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+
+    try {
+      const data = JSON.parse(saved);
+      const form = document.getElementById('debriefForm');
+
+      Object.keys(data).forEach(key => {
+        const elements = form.querySelectorAll(`[name="${key}"]`);
+        if (!elements.length) return;
+
+        const val = data[key];
+
+        elements.forEach(el => {
+          if (el.type === 'checkbox' || el.type === 'radio') {
+            if (Array.isArray(val)) {
+              el.checked = val.includes(el.value);
+            } else {
+              el.checked = (el.value === val);
+            }
+          } else {
+            el.value = val;
+          }
+        });
+      });
+
+      toggleAutreInput();
+      toggleConditionalDetails('q23_select', 'q23_details_box', 'q23_text', ['Non', 'Partiellement']);
+      toggleConditionalDetails('q24_select', 'q24_details_box', 'q24_text', ['Non']);
+      toggleConditionalDetails('q25_select', 'q25_details_box', 'q25_text', ['Oui']);
+
+    } catch (e) {
+      console.error("Erreur lors de la restauration du brouillon:", e);
+    }
+  }
+
+  document.getElementById('debriefForm').addEventListener('input', saveDraft);
+  document.getElementById('debriefForm').addEventListener('change', saveDraft);
+  window.addEventListener('DOMContentLoaded', restoreDraft);
+
+  // --- SOUMISSION DU FORMULAIRE (AJAX) ---
+
   document.getElementById('debriefForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -623,7 +731,6 @@
     const submitBtn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('status-message');
 
-    // Désactivation du bouton pour éviter les double clics
     submitBtn.disabled = true;
     submitBtn.innerText = "Envoi en cours...";
 
@@ -638,11 +745,10 @@
       statusMsg.innerText = "✅ Merci ! Ton débriefing a bien été enregistré.";
       statusMsg.style.display = "block";
       
-      // Réinitialiser le formulaire
       form.reset();
       resetFormCustom();
+      localStorage.removeItem(STORAGE_KEY);
 
-      // Faire défiler vers le haut pour voir le message
       window.scrollTo({ top: 0, behavior: 'smooth' });
     })
     .catch(error => {
